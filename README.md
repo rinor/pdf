@@ -67,17 +67,25 @@ func readPdf2(path string) (string, error) {
 			continue
 		}
 		var lastTextStyle pdf.Text
+
 		texts := p.Content().Text
-		for _, text := range texts {
+		for i, text := range texts {
 			if isSameSentence(text, lastTextStyle) {
 				lastTextStyle.S = lastTextStyle.S + text.S
-			} else {
-				fmt.Printf("Font: %s, Font-size: %f, x: %f, y: %f, content: %s \n", lastTextStyle.Font, lastTextStyle.FontSize, lastTextStyle.X, lastTextStyle.Y, lastTextStyle.S)
-				lastTextStyle = text
+				if i < len(texts)-1 {
+					continue
+				}
 			}
+
+			fmt.Printf("Font: %s, Font-size: %f, x: %f, y: %f, content: %s \n", lastTextStyle.Font, lastTextStyle.FontSize, lastTextStyle.X, lastTextStyle.Y, lastTextStyle.S)
+			lastTextStyle = text
 		}
 	}
 	return "", nil
+}
+
+func isSameSentence(t1, t2 pdf.Text) bool {
+	return t1.Y == t2.Y
 }
 ```
 
